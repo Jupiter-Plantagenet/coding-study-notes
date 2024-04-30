@@ -395,7 +395,31 @@ This line of code in an Express.js application defines a route handler for a spe
 const router = express.Router();
 router.post('/login', login);
 export router;
+```
+This code snippet defines a group of routes specifically for login functionality within an Express.js application. Here's a breakdown of what each line does:
 
+1. **`const router = express.Router();`**
+
+   - This line creates a constant variable named `router` and assigns it the value returned by `express.Router()`. The `express.Router()` function creates an Express router object. This object is essentially a mini-application that allows you to define isolated groups of routes.
+
+2. **`router.post('/login', login);`**
+
+   - This line defines a route handler for the login functionality. It uses the `router` object and its `.post` method.
+     - `.post('/login')`: This part specifies that the route handles POST requests sent to the `/login` endpoint (URL path).
+     - `login`: This is likely a function reference (assuming you have a function named `login` defined elsewhere in your project). This function would be responsible for handling the login logic, such as:
+       - Validating user credentials (username/email and password) sent in the request body.
+       - Potentially checking user credentials against a database or authentication service.
+       - Generating a session or token for the user if login is successful.
+       - Sending a response back to the client (e.g., success message with a token or error message for failed login).
+
+3. **`export router;`**
+
+   - This line assumes you're using a module system like ES modules (common in modern JavaScript). It exports the `router` object containing the defined login route. This allows you to import and use this group of login-related routes in other parts of your application where you want to handle login functionality.
+
+In essence, this code creates a reusable group of routes specifically for login functionality within your application. You can then import and use this router object in your main application file or other modules where you need login functionality.
+---
+
+```
 //Login functionality 
 export const login = async (res, req) => {
  try {
@@ -407,12 +431,202 @@ const isMatch = await bcrypt.compare(password, user.password);
 
 if(!isMatch) return res.status(400).json({ msg : "invalid password"});
 
-const token = jwt.sign({ id : user._id}, process.env.JWT_SECRET_STRING)
+const token = jwt.sign({ id : user._id}, process.env.JWT_SECRET_STRING);
 delete user.password;
 return res.status(200).json({ msg : token, user});
 }
-} catch (err){
+ catch (err){
     res.status(500).json({ msg: "server error"})
+}}
+```
+This code snippet defines an asynchronous function named `login` likely used for user login functionality in your Node.js application. Here's a breakdown of what each part does:
+
+**1. `export const login = async (req, res) => {...}`:**
+
+   - This line defines an asynchronous function named `login` and marks it for export using `export`. This allows other parts of your application to import and use this function.
+   - The function takes two arguments: `req` (request object) and `res` (response object) which are typical for Express.js routes.
+   - The function is asynchronous (`async`), meaning it can handle asynchronous operations (like waiting for database interactions to complete).
+
+**2. User Data Extraction:**
+
+   - `const { email, password } = req.body;`
+   - This line assumes you have configured middleware to parse request bodies (like body-parser) as discussed earlier. It uses destructuring assignment to extract specific properties (`email` and `password`) from the request body object (`req.body`). These properties represent the user credentials submitted during login.
+
+**3. User Existence Check:**
+
+   - `const user = await User.findOne({ email: email })`
+   - This line assumes you have the `User` model defined (as discussed previously) and uses Mongoose to find a user document where the email matches the provided `email`. The `findOne` method is asynchronous, hence the `await`.
+
+   - `if (!user) return res.status(400).json({ message: "user doesn't exist" })`
+   - This checks if the `user` search found a document. If not, it returns a response with a status code of 400 (Bad Request) and a JSON message indicating the user doesn't exist.  
+
+**4. Password Verification:**
+
+   - `const isMatch = await bcrypt.compare(password, user.password);`
+   - This line assumes you have the `bcrypt` package installed. It uses `bcrypt.compare` to compare the provided `password` with the hashed password stored in the `user.password` field (obtained from the database). This asynchronous operation verifies if the entered password matches the hashed one stored for the user.
+
+   - `if (!isMatch) return res.status(400).json({ msg: "invalid password" });`
+   - This checks the result of the password comparison. If the passwords don't match, it returns a response with a status code of 400 (Bad Request) and a JSON message indicating an invalid password.
+
+**5. Token Generation and Response:**
+
+   - Assuming successful login (user exists and password matches):
+     - `const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_STRING);`   
+       - This line assumes you have the `jsonwebtoken` (often abbreviated as `jwt`) package installed for generating JSON Web Tokens (JWTs). It creates a JWT using the user's ID (`user._id`) as the payload data and a secret string stored in the environment variable `JWT_SECRET_STRING`. This secret key is essential for signing and verifying JWTs.
+     - `delete user.password;`
+       - This line removes the user's password property from the user object before sending it back in the response. It's a security best practice to not expose sensitive information like passwords in the response.
+     - `return res.status(200).json({ msg: token, user });`
+       - This line sends a response with a status code of 200 (OK). The response body contains a JSON object with two properties:
+         - `token`: This likely holds the generated JWT token for the user.
+         - `user`: This contains the user object (excluding the password) which might include other user data you want to send back to the client after successful login.
+
+**6. Error Handling:**
+
+   - `catch (err) {...}`
+   - This block catches any errors that might occur during the login process, such as database errors or issues with JWT generation.
+   - Inside the catch block, `res.status(500).json({ msg: "server error" })` sends a generic response with a status code of 500 (Internal Server Error) and a JSON message indicating a server error. You might want to improve error handling in a production environment to provide more specific error messages for debugging purposes.
+
+In summary, this function handles user login by:
+
+  - Extracting email and password from the request body.
+  - Checking if a user exists with the provided email address.
+  - Verifying the password matches the hashed password stored for the user.
+  - Generating a JWT token upon successful login.
+  - Sending a response
+---
+```
+//Authorization logic
+export const verifyToken = async (req, res, next){
+   try {
+      let token = req.header("Authorization");
+      if (!token) return res.status(403).send("Access Denied");
+      if (token.startsWith("Bearer ")){
+         token = token.slice(7, token.length).trimLeft();  
+      }
+
+      const verified = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = verified;
+      next();
+
+} catch (err){
+      res.status(500).send("Server Error");
+   }
 }
 ```
+This code snippet defines an asynchronous function named `verifyToken` likely used as middleware in an Express.js application. It verifies a JWT (JSON Web Token) included in an authorization header for protected routes. Here's a breakdown of what each part does:
 
+**1. `export const verifyToken = async (req, res, next) => {...}`:**
+
+   - This line defines an asynchronous function named `verifyToken` and marks it for export using `export`. This allows other parts of your application to import and use this middleware function.
+   - The function takes three arguments:
+     - `req` (request object): This object contains information about the incoming request.
+     - `res` (response object): This object is used to send responses back to the client.
+     - `next`: This is a function provided by Express.js middleware. Calling `next()` in the middleware allows the request to continue processing to the intended route handler after verification.
+
+**2. Extracting Token:**
+
+   - `let token = req.header("Authorization");`
+   - This line attempts to retrieve the authorization header from the request object. The authorization header typically contains a token used for authentication purposes.
+
+   - `if (!token) return res.status(403).send("Access Denied");`
+   - This checks if the `token` variable has a value. If not, it returns a response with a status code of 403 (Forbidden) and an "Access Denied" message. This indicates that the request is unauthorized because no token was provided.
+
+**3. Isolating Token Value:**
+
+   - Assuming a token exists:
+     - `if (token.startsWith("Bearer ")) { ... }`
+       - This checks if the authorization header value starts with the string "Bearer ". This is a common prefix used with JWTs in authorization headers.
+     - `token = token.slice(7, token.length).trimLeft();`
+       - If the token starts with "Bearer ", this line extracts the actual token value by slicing the string starting from the 7th character (excluding "Bearer ") and trimming any leading whitespace characters.
+
+**4. JWT Verification:**
+
+   - `const verified = jwt.verify(token, process.env.JWT_SECRET);`
+   - This line assumes you have the `jsonwebtoken` package installed. It uses `jwt.verify` to verify the extracted JWT token (`token`). The verification process involves checking the token's signature using the secret key stored in the environment variable `JWT_SECRET_STRING`. If the token is valid and hasn't been tampered with, the verification succeeds. Otherwise, it throws an error.
+
+**5. Attaching User Data and Moving Forward:**
+
+   - Assuming successful verification:
+     - `req.user = verified;`
+       - This line attaches the decoded payload data from the verified JWT token to the `req` (request) object under the property name `user`. This payload data might typically include the user's ID or other relevant user information embedded in the token during generation.
+     - `next();`
+       - This calls the `next` function in the middleware chain, allowing the request to proceed to the intended route handler where it can access the attached user information from `req.user` if needed for authorization or other purposes.
+
+**6. Error Handling:**
+
+   - `catch (err) {...}`
+   - This block catches any errors that might occur during the verification process, such as a missing token, an invalid token format, or an error with the secret key.
+   - Inside the catch block, `res.status(500).send("Server Error");` sends a generic response with a status code of 500 (Internal Server Error) and a "Server Error" message. You might want to improve error handling in a production environment to provide more specific error messages for debugging purposes.
+
+In summary, this middleware function acts as a gatekeeper for protected routes in your application. It verifies the presence and validity of a JWT token included in the authorization header. If the token is valid, it attaches the decoded user information to the request object for use by the intended route handler. If the token is invalid or missing, it returns an error response.
+---
+
+`route.get('/:id', verifyToken, getUser);`
+This line of code defines a route handler in an Express.js application. It specifies how the application should respond to GET requests sent to a specific URL pattern. Here's a breakdown of what each part does:
+
+**1. `route.get(...)`:**
+
+   - `route` likely refers to an Express.js router object that groups route definitions.
+   - `.get(...)` is a method provided by the router object used to define a route handler for GET requests.
+
+**2. `/:id`:**
+
+   - This part defines the path (URL pattern) for which this route handler is responsible. The colon (`:`) followed by `id` indicates a dynamic parameter named `id`. This means the URL can have any value after the slash (`/`) and before the next path segment. For example, this route handler would respond to requests like:
+     - `/users/123`
+     - `/products/abc`
+     - `/posts/xyz` (assuming these URLs follow the intended pattern)
+
+**3. `verifyToken, getUser`:**
+
+   - These are two separate JavaScript functions passed as arguments to the `.get` method. The first represents middleware functionality that will be executed before the actual route handler function (`getUser`) is called.
+
+**Breakdown of Middleware Execution:**
+
+  1. When a GET request arrives matching the URL pattern (`/:id`), the `verifyToken` middleware function is invoked first.
+  2. `verifyToken` checks for a JWT (JSON Web Token) in the authorization header and verifies it using a secret key. If the token is valid, it might attach decoded user information to the request object.
+  3. If `verifyToken` allows the request to proceed (e.g., valid token or no token required for this route), the `getUser` function is called next.
+  4. `getUser` likely retrieves user data from a database (potentially using the `id` from the URL parameter) and sends a response back to the client.
+
+In essence, this line defines a route handler for a dynamic URL pattern (`/:id`). It enforces authorization using middleware (`verifyToken`) before potentially fetching user data (`getUser`) and sending a response.
+---
+```
+`route.patch("/:id/:friendId", verifyToken, addFriend)`
+```
+This line of code defines a route handler in an Express.js application for patching a friendship between users, likely adding a friend. Here's a breakdown of what each part does:
+
+**1. `route.patch(...)`:**
+
+   - `route` likely refers to an Express.js router object that groups route definitions.
+   - `.patch(...)` is a method provided by the router object used to define a route handler for PATCH requests. PATCH requests are typically used for partial updates to data.
+
+**2. `/:id/:friendId`:**
+
+   - This part defines the path (URL pattern) for which this route handler is responsible. It has two dynamic parameters separated by slashes:
+     - `:id`: This likely represents the ID of the user making the friend request.
+     - `:friendId`: This likely represents the ID of the user being requested as a friend.
+
+**3. `verifyToken, addFriend`:**
+
+   - These are two separate JavaScript functions passed as arguments to the `.patch` method. They represent middleware functions that will be executed in sequence before the actual route handler function (`addFriend`) is called.
+
+**Breakdown of Functionality:**
+
+  1. When a PATCH request arrives matching the URL pattern (`/:id/:friendId`), the `verifyToken` middleware function is invoked first.
+  2. `verifyToken` likely checks for a JWT (JSON Web Token) in the authorization header and verifies it using a secret key. If the token is valid, it might attach decoded user information to the request object.
+  3. If `verifyToken` allows the request to proceed (e.g., valid token), the `addFriend` function is called next.
+  4. `addFriend` likely performs the logic for adding a friend. It would likely:
+     - Access the user IDs (`id` and `friendId`) from the URL parameters.
+     - Retrieve user data from the database (using the IDs).
+     - Update the user data to establish the friend connection (potentially using Mongoose or a similar database interaction library).
+     - Send a response back to the client indicating success or failure.
+
+In essence, this route handler allows authenticated users (via `verifyToken`) to send a PATCH request to add a friend by providing their own user ID and the friend's ID in the URL. The `addFriend` function would handle the logic for making the friend connection within your application's data store.
+---
+**How To Solve Coding Problems**
+1. Write the solution in good pseudocode
+2. Translate the pseudocode, line by line, into code, testing each line to verify it works as intended as you go.
+3. Only move to translating the next line when the previous one works as intended.
+4. Don't struggle for more than 15 minutes; after 15mins, look up the solution.
+---
+**How to write good pseudocode**
+---
