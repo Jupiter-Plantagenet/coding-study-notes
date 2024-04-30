@@ -378,3 +378,41 @@ In summary, this function handles user registration by:
   - Saving the user data to the database.
   - Sending a success response with the saved user information or an error response if the registration fails.
 ---
+
+'app.use('/auth', authRoutes);`
+This line of code in an Express.js application defines a route handler for a specific path segment (`/auth`) and associates it with a group of routes likely defined elsewhere in your project. Here's a breakdown:
+
+- **`app.use`**: This is a function provided by the Express.js framework used to define middleware and route handlers. In this case, it's being used to define a route handler for a specific path.
+
+- **`/auth`**: This part defines the path prefix for which this route handler is responsible. Any requests with a URL starting with `/auth` will be handled by the logic associated with this line.  For example, requests to `/auth/register` or `/auth/login` would be routed appropriately.
+
+- **`authRoutes`**: This is likely a variable containing an object or function that represents a collection of routes related to authentication functionality. It's common practice to separate route definitions into different modules for better organization. This `authRoutes` object or function might be imported from another JavaScript file where you have defined specific routes for user registration, login, password reset, etc.
+
+**Essentially,** this line tells the Express application to use the set of routes defined in `authRoutes` whenever a request URL starts with `/auth`. The specific routes within `authRoutes` would then handle the individual functionalities like registration, login, or other authentication-related actions within your application. 
+---
+
+```
+const router = express.Router();
+router.post('/login', login);
+export router;
+
+//Login functionality 
+export const login = async (res, req) => {
+ try {
+   const { email, password } = req.body;
+   const user await User.findOne( {email : email})
+ if(!user)return res.status(400).json({message : "ueer doesn't exist"})
+
+const isMatch = await bcrypt.compare(password, user.password);
+
+if(!isMatch) return res.status(400).json({ msg : "invalid password"});
+
+const token = jwt.sign({ id : user._id}, process.env.JWT_SECRET_STRING)
+delete user.password;
+return res.status(200).json({ msg : token, user});
+}
+} catch (err){
+    res.status(500).json({ msg: "server error"})
+}
+```
+
