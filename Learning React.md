@@ -699,5 +699,10 @@ export const SignupForm = () => {
   )
 };
 
-
-Hooks
+## How to split UI components
+1. Each component should be a logical separation of content or logical division of the layout.
+2. Each component should be reusable within the app as much as possible. Howvever, not all components are meant to be reuasble
+3. Each component shpould a single, well defined responsibility.
+4. No too many states or props in a single component
+5. Name a component according to what it does or what it displays.
+6. Colocate related components in the same file.
