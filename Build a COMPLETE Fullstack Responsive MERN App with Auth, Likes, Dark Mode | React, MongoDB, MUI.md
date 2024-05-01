@@ -629,4 +629,20 @@ In essence, this route handler allows authenticated users (via `verifyToken`) to
 4. Don't struggle for more than 15 minutes; after 15mins, look up the solution.
 ---
 **How to write good pseudocode**
+(https://medium.com/@ngunyimacharia/how-to-write-pseudocode-a-beginners-guide-29956242698)
+*Write in english but take advantage of the following programming constructs*
+- FUNCTION *functionName*:
+     params: *list parameters or nil if none.*
+     body: {*Define function body*}
+     *Use indentation to define a function/code block
+- WHILE (*state condition*):
+     do: *what should be done iteratively while condition is true*
+- IF (*state condition*):
+     do: *What to do if condition is true*
+     else: *what to do if condition is false*
+- Calling a function: functionName()
+- Throwing an exception: error(*error message*)
+- Assignment: variable := value
+- Make only one statement per line
 ---
+
