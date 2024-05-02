@@ -1,7 +1,7 @@
 
 Check this out for a week long rubberducking (https://www.youtube.com/watch?v=K8YELRmUb5o)
 Rubber ducking rules:
-a. No redundancies: Each line rubber ducked in this file must not repeat in whole or in part what has been runer ducked prior.
+a. No redundancies: Each line rubber ducked in this file must not repeat in whole or in part what elsehas been runer ducked prior.
 b. Study 30 mins of video a day. This will take you no more than 11 days, so Apr 29 - May 9.
 c. Don't leave a single line of code un-understood
 ---
@@ -645,4 +645,47 @@ In essence, this route handler allows authenticated users (via `verifyToken`) to
 - Assignment: variable := value
 - Make only one statement per line
 ---
+`npm i react-redux @reduxjs/toolkit redux-persist redux-dropzone @mui/material @motion/react @emtion/styled @mui/icon-material react-router-dom`
+The following packages are being installed using `npm i`:
 
+**1. React Ecosystem:**
+
+  - `react`: The core library for building user interfaces with React.
+  - `react-redux`: Connects your React components to a Redux store, allowing them to read data and dispatch actions.
+  - `@reduxjs/toolkit`: An official opinionated toolkit that simplifies setting up Redux with features like reducers, slices, and middleware.
+  - `react-router-dom`: Provides routing functionalities for React applications, enabling navigation between different views or components based on URL patterns.
+
+**2. State Management:**
+
+  - `redux`: A predictable state container for JavaScript applications. It helps manage application state in a centralized way.
+  - `redux-persist`: A library that allows persisting the Redux application state (or parts of it) in various storage mechanisms like localStorage or cookies, allowing data to survive page reloads.
+  - `redux-dropzone`: handles file uploads between frontend and backend
+
+**3. UI Libraries and Styling:**
+
+  - `@mui/material`: A popular React component library from MUI (Material-UI) that implements Google's Material Design for building user interfaces with pre-built components like buttons, cards, text fields, etc.
+  - `@emotion/react`: A library that allows you to write CSS-in-JS for styling React components.
+  - `@emotion/styled`: A higher-order component built on top of `@emotion/react` that provides a way to define styled components for a more concise and reusable styling approach.
+  - `@mui/icon-material`: An icon library from MUI that provides a collection of Material Design icons for use within your components.
+
+**Breakdown of Purpose:**
+
+This set of packages equips you with the tools to build a React application with the following functionalities:
+
+  - Core React component creation (`react`)
+  - Redux state management (`redux`, `@reduxjs/toolkit`) with persistence (`redux-persist`)
+  - Material Design UI components (`@mui/material`, `@mui/icon-material`)
+  - CSS-in-JS styling (`@emotion/react`, `@emotion/styled`)
+  - Routing and navigation (`react-router-dom`)
+
+By combining these packages, you can create a well-structured, state-managed React application with a modern and consistent user interface based on Material Design principles.
+---
+jsconfig.json
+```
+{
+    "compilerOptions":{
+      "baseUrl":"src"
+      }
+      "include": ["src"]
+}
+```
