@@ -711,3 +711,27 @@ This configuration provides a basic setup for understanding your project's struc
   - You can add more options within the `compilerOptions` object to customize the language service's behavior further (e.g., specifying target ECMAScript version, enabling strict mode, etc.).
   - Some other editors might also use `jsconfig.json` or similar configuration files for their JavaScript language support.
 ---
+```
+import {createSlice} from 'reduxjs/toolkit';
+
+//State accesible by every part of the app
+const initialState = {
+   mode: "light",
+   user: null,
+   token: null,
+   posts:[]
+};
+
+export const authSlice = creatSlice({
+   name: "auth"
+   initialState,
+   reducers:{]})
+
+```
+Memory leak happens when a object without a pointer to it is not cleared up by te garbage collector. Such an object will still take up memory space, can't be accessed by code and such will slow down the program.
+
+## What is Redux
+Redux is a pattern as well as a libraryt for managing app state using events called actions. It serves as a centralized store for state that needs to be used across your entire application, with rules ensuring that the state can only be updated in a predictable fashion.
+Python dosn't allow multithreading becasue of the GIL. So the rare bad case of multiple thread accessing the same object.
+
+#TIMESTAMP NOTES
