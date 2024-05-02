@@ -689,3 +689,25 @@ jsconfig.json
       "include": ["src"]
 }
 ```
+The file `jsconfig.json` you provided is a configuration file for the JavaScript language service, typically used with editors like Visual Studio Code (VS Code). This specific configuration defines settings related to how VS Code understands and works with your JavaScript project.
+
+Here's a breakdown of the options:
+
+  - **`compilerOptions`:** This property is an object containing options for the JavaScript language service's compiler.
+    - **`baseUrl`:** This option sets the base directory for resolving non-relative module paths. In this case, `"baseUrl": "src"` specifies that the `src` directory is the root for resolving module paths that don't start with `./` or `../`. This helps the editor understand how to locate imported modules within your project structure.
+
+  - **`include`:** This property is an array that specifies a list of glob patterns to include in language service features like autocompletion and code navigation. In this case, `"include": ["src"]` tells the editor to include only files within the `src` directory for these features. This helps improve performance and focus the editor's attention on your project's source code.
+
+In essence, this `jsconfig.json` configuration instructs VS Code to:
+
+  - Use the `src` directory as the base for resolving module paths.
+  - Only consider files within the `src` directory for autocompletion, code navigation, and other language service features.
+
+This configuration provides a basic setup for understanding your project's structure and improves the development experience within VS Code.
+
+**Additional Notes:**
+
+  - This file is not required for your JavaScript code to run but is specifically for editor functionality.
+  - You can add more options within the `compilerOptions` object to customize the language service's behavior further (e.g., specifying target ECMAScript version, enabling strict mode, etc.).
+  - Some other editors might also use `jsconfig.json` or similar configuration files for their JavaScript language support.
+---
