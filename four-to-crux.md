@@ -24,7 +24,10 @@ How to setup Babel automated transpilation and Nodemon at buildtime
    `"compile": "babel src --out-dir public"`: Compile jsx in src directory into js in public directory(js file auto-generated)
    `"watch": "babel src --out-dir public --watch --verbose"`: Wach for changes in src directory and print out a line in console upon any change
 
-https://www.youtube.com/watch?v=l8WPWK9mS5M&t=241s
-https://webdesign.tutsplus.com/build-a-simple-weather-app-with-vanilla-javascript--cms-33893t
-https://www.taniarascia.com/crud-app-in-react-with-hooks/
-https://www.youtube.com/watch?v=SjjmHNdE32Y
+(https://www.youtube.com/watch?v=l8WPWK9mS5M&t=241s)
+
+(https://webdesign.tutsplus.com/build-a-simple-weather-app-with-vanilla-javascript--cms-33893t)
+
+(https://www.taniarascia.com/crud-app-in-react-with-hooks/)
+
+(https://www.youtube.com/watch?v=SjjmHNdE32Y)
